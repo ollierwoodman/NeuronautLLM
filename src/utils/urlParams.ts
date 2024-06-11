@@ -22,23 +22,23 @@ const QueryParams: { [key: string]: QueryParamInfo } = {
     defaultValue: ComponentTypeForAttention.ATTENTION_HEAD,
     jsonEncoded: false,
   },
-  topAndBottomKForNodeTable: { key: "topAndBottomKForNodeTable", defaultValue: 100 },
+  topAndBottomKForNodeTable: { key: "topAndBottomKForNodeTable", defaultValue: 30 },
   hideEarlyLayersWhenAblating: {
     key: "hideEarlyLayersWhenAblating",
     defaultValue: true,
   },
   prompt: {
     key: "prompt",
-    defaultValue: "<|endoftext|>Paris, France. Ottawa,",
+    defaultValue: " the apple fell from the",
     jsonEncoded: false,
   },
   targetTokens: {
     key: "targetTokens",
-    defaultValue: [" Canada"],
+    defaultValue: [" tree"],
   },
   distractorTokens: {
     key: "distractorTokens",
-    defaultValue: [" Germany"],
+    defaultValue: [" sky"],
   },
   nodeAblations: { key: "nodeAblations", defaultValue: [] },
   upstreamNodeToTrace: {

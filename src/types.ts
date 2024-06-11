@@ -2,6 +2,7 @@ import { PaneComponentType } from "./panes";
 import { TokenAndScalar, TokenAndAttentionScalars, NodeAblation, NodeToTrace, ComponentTypeForMlp, ComponentTypeForAttention } from "./client";
 import { NodeType } from "./client/models/NodeType";
 import { assertUnreachable } from "./requests/readRequests";
+import { Color } from "./utils/colors";
 
 export { NodeType };
 
@@ -165,6 +166,7 @@ export type NeuronDbRow = {
   neuron_index: number;
   explanation_text: string;
   explanation_embedding: number[];
+  explanation_topic_id: number;
   explanation_ev_correlation_score: number;
   explanation_rsquared_score: number;
   explanation_absolute_dev_explained_score: number;
@@ -173,29 +175,6 @@ export type NeuronDbRow = {
   activation_skewness: number;
   activation_kurtosis: number;
 };
-
-export type UnparsedNeuronDbRow = {
-  id: string;
-  layer_index: number;
-  neuron_index: number;
-  explanation_text: string;
-  explanation_embedding: string;
-  explanation_ev_correlation_score: number;
-  explanation_rsquared_score: number;
-  explanation_absolute_dev_explained_score: number;
-  activation_mean: number;
-  activation_variance: number;
-  activation_skewness: number;
-  activation_kurtosis: number;
-};
-
-export type UnparsedActivationDbRow = {
-  id: string;
-  neuron_id: string;
-  category: string;
-  tokens: string;
-  activation_values: string;
-}
 
 export type ActivationDbRow = {
   id: string;
@@ -205,4 +184,15 @@ export type ActivationDbRow = {
   activation_values: number[];
 }
 
-export type UnparsedActivationDbRowCollection = UnparsedActivationDbRow[];
+export type TopicDbRow = {
+  id: string;
+  title: string;
+  top_words: string[];
+}
+
+export type Topic = {
+  id: string;
+  title: string;
+  topWords: string[];
+  color: Color;
+}

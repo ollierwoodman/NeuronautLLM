@@ -1,6 +1,6 @@
 import { connect } from "@/app/api/db";
+import { parseJsonColumnsForDbRow } from "@/app/api/parseJsonColumns";
 import { NextResponse } from "next/server";
-import { Database, Statement } from "sqlite3";
 
 export async function GET(
   request: Request,
@@ -20,7 +20,7 @@ export async function GET(
     return NextResponse.json({ error: "Failed to connect to database" }, { status: 500 });
   }
 
-  const neurons = await db.get(
+  const neuron = await db.get(
     "SELECT * FROM neurons WHERE layer_index = $layer_index AND neuron_index = $neuron_index", 
     {
       $layer_index: layerIndex,
@@ -28,5 +28,10 @@ export async function GET(
     },
   );
 
-  return NextResponse.json(neurons)
+  const parsedNeuron = parseJsonColumnsForDbRow(
+    ["explanation_embedding"], 
+    neuron,
+  );
+
+  return NextResponse.json(parsedNeuron);
 }

@@ -50,7 +50,7 @@ const TokenHeatmap: React.FC<TokenHeatmapProps> = ({
   boundaries,
 }) => {
   return (
-    <div className="text-wrap font-mono">
+    <div className="flex flex-wrap font-mono">
       {tokenSequence &&
         tokenSequence.map(({ token, scalar, normalizedScalar }, i) => {
           const color = getInterpolatedColor(

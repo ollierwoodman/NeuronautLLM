@@ -8,7 +8,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-import { CommonInferenceParams, Node, PromptInferenceParams } from "@/types";
+import { CommonInferenceParams, NeuronDbRow, Node, PromptInferenceParams, Topic, TopicDbRow } from "@/types";
 import React, { useState, useMemo, useEffect } from "react";
 import {
   type MultipleTopKDerivedScalarsResponseData,
@@ -25,6 +25,8 @@ import { queryToInferenceParams, updateQueryFromInferenceParams } from "@/utils/
 import { useSearchParams, useRouter } from "next/navigation";
 import PromptForm from "@/components/PromptForm";
 import { NodeDetails } from "@/components/NodeDetails";
+import { TopicColors } from "@/utils/colors";
+import { ModelOverview } from "@/components/ModelOverview";
 
 const Home: React.FC = () => {
   // Top level component, should manage all state and pass it down to children
@@ -76,7 +78,9 @@ const Home: React.FC = () => {
   const [activationServerErrorMessage, setActivationServerErrorMessage] = useState<string | null>(
     null
   );
+
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [neuronDbSample, setNeuronDbSample] = useState<NeuronDbRow[]>([]);
 
   function handleNodeClick(node: Node | null): Node | null {
     if (node) {
@@ -87,8 +91,30 @@ const Home: React.FC = () => {
     return null;
   };
 
+
+  const [neuronTopics, setNeuronTopics] = useState<Topic[]>([]);
+
+  useEffect(() => {
+    fetch(`/api/topics`)
+      .then((res) => res.json() as Promise<TopicDbRow[]>)
+      .then((dbTopics) => {
+        setNeuronTopics(dbTopics.map((row) => {
+          return {
+            id: row.id,
+            title: row.title,
+            topWords: row.top_words,
+            color: TopicColors[row.id],
+          }
+        }));
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  }, []);
+
   const inferenceDataFetcher = new InferenceDataFetcher();
   const fetchInferenceData = React.useCallback(async () => {
+    setSelectedNode(null);
     inferenceDataFetcher.fetch(
       modelInfo,
       commonInferenceParams,
@@ -164,42 +190,40 @@ const Home: React.FC = () => {
         </div>
         <div className="flex flex-col flex-1 border-2 rounded-md">
           <ResizablePanelGroup direction="horizontal" className="w-full flex-1">
-            <ResizablePanel defaultSize={20} className="flex">
-              <div className="flex flex-1 p-2">
-                <h2 className="text-xl">Model Overview</h2>
-              </div>
+            <ResizablePanel defaultSize={25} className="flex">
+              <ModelOverview
+                leftResponse={leftResponse}
+                leftPromptInferenceParams={leftPromptInferenceParams}
+              />
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={60} className="flex">
-              <div className="flex flex-col flex-1 p-2">
-                <h2 className="text-xl">Neuron Space</h2>
-                <NodeView
-                  responseData={
-                    getSubResponse<MultipleTopKDerivedScalarsResponseData>(
-                      leftResponse,
-                      "topKComponents"
-                    )!
-                  }
-                  inferenceAndTokenData={getInferenceAndTokenData(leftResponse)!}
-                  selectedNode={selectedNode}
-                  handleNodeClickCallback={handleNodeClick}
-                />
-              </div>
+            <ResizablePanel defaultSize={50} className="flex">
+              {
+                getSubResponse<MultipleTopKDerivedScalarsResponseData>(leftResponse, "topKComponents") &&
+                getInferenceAndTokenData(leftResponse) && (
+                  <NodeView
+                    leftResponse={leftResponse}
+                    selectedNode={selectedNode}
+                    handleNodeClickCallback={handleNodeClick}
+                    setNeuronDbSample={setNeuronDbSample}
+                    neuronTopics={neuronTopics}
+                  />
+                )
+              }
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel defaultSize={20} className="flex">
-              <div className="flex flex-col w-full p-2">
-                <h2 className="text-xl">Neuron Details</h2>
-                <NodeDetails
-                  responseData={leftResponse}
-                  selectedNode={selectedNode}
-                />
-              </div>
+            <ResizablePanel defaultSize={25} className="flex">
+              <NodeDetails
+                responseData={leftResponse}
+                selectedNode={selectedNode}
+                neuronDbSample={neuronDbSample}
+                neuronTopics={neuronTopics}
+              />
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </main>
   );
 }

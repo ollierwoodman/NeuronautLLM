@@ -51,7 +51,7 @@ export const PromptInput: React.FC<{
           fetchInferenceData();
         }}
       >
-        Analyze
+        Submit query
       </Button>
     </>
   );

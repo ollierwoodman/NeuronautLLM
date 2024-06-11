@@ -39,7 +39,9 @@ export const PromptForm: React.FC<InferenceParamsDisplayProps> = ({
         <div className="group-aria-expanded:hidden flex flex-row font-mono gap-2">
           <p className="bg-gray-300 rounded-md px-2 py-1" title="prompt tokens">{leftPromptInferenceParams.prompt}</p>
           <p className="bg-gray-300 rounded-md px-2 py-1" title="target tokens">{leftPromptInferenceParams.targetTokens.reduce((acc, token) => { return acc + ", " + token })}</p>
-          <p className="bg-gray-300 rounded-md px-2 py-1" title="distractor tokens">{leftPromptInferenceParams.distractorTokens.reduce((acc, token) => { return acc + ", " + token })}</p>
+          {leftPromptInferenceParams.distractorTokens.length > 0 && (
+            <p className="bg-gray-300 rounded-md px-2 py-1" title="distractor tokens">{leftPromptInferenceParams.distractorTokens.reduce((acc, token) => { return acc + ", " + token }, "")}</p>
+          )}
         </div>
         <div className="text-xl">
           <IconChevronDown />

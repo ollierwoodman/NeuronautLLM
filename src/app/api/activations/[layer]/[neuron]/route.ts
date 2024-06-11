@@ -1,4 +1,5 @@
 import { connect } from "@/app/api/db";
+import { parseJsonColumnsForDbRows } from "@/app/api/parseJsonColumns";
 import { NextRequest, NextResponse } from "next/server";
 
 const QUERY_PARAM_DEFAULTS = {
@@ -22,9 +23,11 @@ export async function GET(
     return NextResponse.json({ error: "Invalid layer or neuron index" }, { status: 400 });
   }
 
-  const db = await connect().catch((e: Error) => {
-    return NextResponse.json({ error: e.message }, { status: 500 });
-  });
+  const db = await connect().then((db) => db)
+    
+  if (!db) {
+    return NextResponse.json({ error: "Failed to connect to database" }, { status: 500 });
+  }
 
   const activations = await db.all(
     "SELECT * FROM activations WHERE neuron_id = (SELECT id FROM neurons WHERE layer_index = $layer_index AND neuron_index = $neuron_index) AND category = $category LIMIT $limit OFFSET 0", 
@@ -36,5 +39,13 @@ export async function GET(
     },
   );
 
-  return NextResponse.json(activations)
+  const parsedActivations = parseJsonColumnsForDbRows(
+    [
+      "tokens",
+      "activation_values",
+    ],
+    activations,
+  );
+
+  return NextResponse.json(parsedActivations)
 }

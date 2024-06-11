@@ -1,0 +1,10 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 100,
+      "driver": "SQLite",
+      "name": "ChinaGraph2024",
+      "database": "C:\\Users\\Ollie\\Documents\\SoftDev\\ChinaGraph2024Database\\ChinaGraph2024.db"
+    }
+  ]
+}
