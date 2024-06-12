@@ -1,6 +1,8 @@
 import { MultipleTopKDerivedScalarsResponseData } from "@/client";
 import { ChartColors } from "@/utils/colors";
 import { Chart, GoogleChartOptions } from "react-google-charts";
+import { Tree, TreeLeaf, TreeNode, Treemap } from "./TreeMapChart";
+import { useObserveSize } from "@/hooks/observeSize";
 
 type NextTokenChartProps = {
   topOutputTokenLogits: MultipleTopKDerivedScalarsResponseData;
@@ -11,43 +13,32 @@ export const NextTokenChart: React.FC<NextTokenChartProps> = ({
   topOutputTokenLogits,
   softmaxedLogits,
 }) => {
+  const { width: wrapperWidth, height: wrapperHeight, ref: wrapperRef} = useObserveSize();
   const nextTokenCandidates = topOutputTokenLogits.vocabTokenStringsForIndices;
 
-  const data = [
-    ["Token", "Probability"],
-  ] as any[][];
-
-  nextTokenCandidates?.forEach((token, index) => {
-    data.push([token, softmaxedLogits[index]])
-  });
-  
-  const options: GoogleChartOptions = {
-    chartArea: {
-      left: 10,
-      right: 10,
-      top: 10,
-      bottom: 10,
-    },
-    backgroundColor: "white",
-    legend: "none",
-    tooltip: {
-      text: "percentage",
-    },
-    pieSliceText: "label",
-    pieResidueSliceLabel: "(other)",
-    sliceVisibilityThreshold: 0.01,
-    colors: ChartColors,
+  const treeData: TreeNode = {
+    type: "node",
+    name: "Token prediction distribution",
+    value: 0,
+    logit: 0,
+    children: nextTokenCandidates?.map((token, index) => {
+      return {
+        type: "leaf",
+        name: token,
+        value: softmaxedLogits[index],
+        logit: topOutputTokenLogits.activationsByGroupId["logits"][index],
+      };
+    }) || [] as Tree[],
   };
-
+  
   return (
     <>
-      <div className="flex flex-1">
-        <Chart
-          chartType="PieChart"
-          data={data}
-          options={options}
-          width={"100%"}
-          height={"100%"}
+      <div ref={wrapperRef} className="flex flex-1">
+        <Treemap
+          data={treeData}
+          width={wrapperWidth}
+          height={wrapperHeight}
+          margin={5}
         />
       </div>
     </>

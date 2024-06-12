@@ -126,7 +126,7 @@ export const NodeDetails: React.FC<NodeDetailsProps> = ({
   return (
     <>
       <div className="flex flex-1 flex-col w-full p-2">
-        <h2 className="text-xl text-center">Neuron explanation</h2>
+        <h2 className="text-xl text-center font-bold">Neuron explanation</h2>
         { selectedNode && (
           <p className="text-sm text-center text-gray-600">
             layer{' '}

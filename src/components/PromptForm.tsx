@@ -35,7 +35,7 @@ export const PromptForm: React.FC<InferenceParamsDisplayProps> = ({
   return <>
     <Collapsible defaultOpen={true} className="flex flex-col items-center w-full">
       <CollapsibleTrigger className="group flex flex-row justify-between items-center w-full aria-expanded:mb-2">
-        <h2 className="flex-none text-xl">Prompt input</h2>
+        <h2 className="flex-none text-xl font-bold">Prompt input</h2>
         <div className="group-aria-expanded:hidden flex flex-row font-mono gap-2">
           <p className="bg-gray-300 rounded-md px-2 py-1" title="prompt tokens">{leftPromptInferenceParams.prompt}</p>
           <p className="bg-gray-300 rounded-md px-2 py-1" title="target tokens">{leftPromptInferenceParams.targetTokens.reduce((acc, token) => { return acc + ", " + token })}</p>

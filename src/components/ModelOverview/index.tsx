@@ -31,7 +31,7 @@ export const ModelOverview: React.FC<ModelOverviewProps> = ({
   return (
     <>
       <div className="flex flex-col w-full p-2">
-        <h2 className="text-xl text-center">Token effect and prediction</h2>
+        <h2 className="text-xl text-center font-bold">Token effect and prediction</h2>
         {bestNextTokenCandidate && (
           <h2 className="text-sm text-center text-gray-600">predicted next token:{' '}
             <span className="font-mono">
@@ -54,12 +54,6 @@ export const ModelOverview: React.FC<ModelOverviewProps> = ({
             />
             <h3 className="text-lg text-center mt-2">Next token prediction results</h3>
             <NextTokenChart 
-              topOutputTokenLogits={
-                topOutputTokenLogits
-              }
-              softmaxedLogits={softmaxedLogits}
-            />
-            <TokenOutputTable
               topOutputTokenLogits={
                 topOutputTokenLogits
               }

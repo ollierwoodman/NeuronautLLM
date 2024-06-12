@@ -9,6 +9,7 @@ export default function Header() {
         width={50} 
         height={50}
         className="-my-2"
+        priority
       />
       <h1 className="text-4xl">NeuronautLLM</h1>
     </header>
